@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Truck, AlertCircle } from 'lucide-react';
+import { Truck, AlertCircle, Sparkles } from 'lucide-react';
 import TripForm from './components/TripForm';
 import RouteMap from './components/RouteMap';
 import TripSummary from './components/TripSummary';
 import ELDLogViewer from './components/ELDLogViewer';
+import LoadingModal from './components/LoadingModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 
@@ -13,14 +14,24 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState(null);
   const [tripData, setTripData] = useState(null);
 
   const handleTripCalculation = async (formData) => {
     setLoading(true);
+    setLoadingStep(0);
     setError(null);
     
     try {
+      // Simulate progress steps
+      setLoadingStep(1); // Geocoding
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setLoadingStep(2); // Calculating route
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setLoadingStep(3); // HOS regulations
       const response = await axios.post(`${API_BASE_URL}/calculate-trip/`, {
         current_location: formData.current_location,
         pickup_location: formData.pickup_location,
@@ -28,6 +39,9 @@ function App() {
         current_cycle_used: parseFloat(formData.current_cycle_used)
       });
 
+      setLoadingStep(4); // Generating logs
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       setTripData(response.data);
     } catch (err) {
       console.error('Error calculating trip:', err);
@@ -37,25 +51,31 @@ function App() {
       );
     } finally {
       setLoading(false);
+      setLoadingStep(0);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      {/* Loading Modal */}
+      <LoadingModal isOpen={loading} currentStep={loadingStep} />
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary rounded-lg">
-              <Truck className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                ELD Trip Planner
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Plan your route with HOS compliance and ELD logs
-              </p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl shadow-lg">
+                <Truck className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  ELD Trip Planner
+                </h1>
+                <p className="text-sm text-gray-600 flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" />
+                  Smart route planning with HOS compliance
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -85,9 +105,12 @@ function App() {
 
             {/* Info Card */}
             {!tripData && !error && (
-              <Card className="mt-4">
+              <Card className="mt-4 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50">
                 <CardHeader>
-                  <CardTitle className="text-lg">How It Works</CardTitle>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-blue-600" />
+                    How It Works
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-2">
                   <p>

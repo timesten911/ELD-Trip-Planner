@@ -27,13 +27,15 @@ const TripForm = ({ onSubmit, loading }) => {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Navigation className="h-6 w-6 text-primary" />
+    <Card className="w-full shadow-xl border-2 border-blue-100 hover:border-blue-200 transition-all duration-300">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+        <CardTitle className="flex items-center gap-2 text-xl">
+          <div className="p-2 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg">
+            <Navigation className="h-5 w-5 text-white" />
+          </div>
           Trip Details
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-gray-600">
           Enter your trip information to calculate route and ELD compliance
         </CardDescription>
       </CardHeader>
@@ -106,14 +108,21 @@ const TripForm = ({ onSubmit, loading }) => {
             </p>
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button 
+            type="submit" 
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300" 
+            disabled={loading}
+          >
             {loading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Calculating Trip...
               </>
             ) : (
-              'Calculate Trip'
+              <>
+                <Navigation className="mr-2 h-5 w-5" />
+                Calculate Trip
+              </>
             )}
           </Button>
         </form>
