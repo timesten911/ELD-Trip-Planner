@@ -247,9 +247,7 @@ function App() {
           <p>
             ELD Trip Planner - Compliant with FMCSA Hours of Service regulations
           </p>
-          <p className="mt-1">
-            For educational and planning purposes. Always verify with official sources.
-          </p>
+          
         </div>
       </footer>
     </div>
